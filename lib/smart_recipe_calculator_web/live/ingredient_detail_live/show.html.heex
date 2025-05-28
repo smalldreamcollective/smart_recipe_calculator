@@ -1,0 +1,25 @@
+<.header>
+  Ingredient detail {@ingredient_detail.id}
+  <:subtitle>This is a ingredient_detail record from your database.</:subtitle>
+  <:actions>
+    <.link patch={~p"/ingredient_details/#{@ingredient_detail}/show/edit"} phx-click={JS.push_focus()}>
+      <.button>Edit ingredient_detail</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.list>
+</.list>
+
+<.back navigate={~p"/ingredient_details"}>Back to ingredient_details</.back>
+
+<.modal :if={@live_action == :edit} id="ingredient_detail-modal" show on_cancel={JS.patch(~p"/ingredient_details/#{@ingredient_detail}")}>
+  <.live_component
+    module={SmartRecipeCalculatorWeb.IngredientDetailLive.FormComponent}
+    id={@ingredient_detail.id}
+    title={@page_title}
+    action={@live_action}
+    ingredient_detail={@ingredient_detail}
+    patch={~p"/ingredient_details/#{@ingredient_detail}"}
+  />
+</.modal>

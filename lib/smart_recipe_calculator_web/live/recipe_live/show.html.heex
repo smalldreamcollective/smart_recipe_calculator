@@ -1,0 +1,68 @@
+<.header>
+  Recipe <%= @recipe.id %>
+  <:subtitle>This is a recipe record.</:subtitle>
+  <:actions>
+    <.link patch={~p"/recipes/#{@recipe}/show/edit"} phx-click={JS.push_focus()}>
+      <.button>Edit recipe</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.list>
+  <:item title="Name"><%= @recipe.name %></:item>
+  <:item title="Description"><%= @recipe.description %></:item>
+  <:item title="Prep Time"><%= @recipe.prep_time %> minutes</:item>
+  <:item title="Cook Time"><%= @recipe.cook_time %> minutes</:item>
+  <:item title="Total Time"><%= (@recipe.prep_time || 0) + (@recipe.cook_time || 0) %> minutes</:item>
+  <:item title="Servings"><%= @recipe.servings %></:item>
+  <:item title="Difficulty"><%= @recipe.difficulty %></:item>
+</.list>
+
+<div class="mt-8">
+  <h2 class="text-lg font-semibold mb-4">Instructions</h2>
+  <div class="mt-4">
+    <.table
+      id="instructions"
+      rows={@streams.instructions}
+    >
+      <:col :let={{_id, instruction}} label="Step"><%= instruction.step_number %></:col>
+      <:col :let={{_id, instruction}} label="Instruction"><%= instruction.instruction.text %></:col>
+    </.table>
+  </div>
+</div>
+
+<div class="mt-8">
+  <h2 class="text-lg font-semibold mb-4">Ingredients</h2>
+  <div class="mt-4">
+    <.table
+      id="ingredients"
+      rows={@streams.ingredients}
+      row_click={fn {_id, ingredient} -> JS.navigate(~p"/ingredients/#{ingredient.ingredient_id}") end}
+    >
+      <:col :let={{_id, ingredient}} label="Name"><%= ingredient.ingredient.name %></:col>
+      <:col :let={{_id, ingredient}} label="Quantity"><%= ingredient.quantity %></:col>
+      <:col :let={{_id, ingredient}} label="Unit"><%= ingredient.ingredient.unit %></:col>
+      <:action :let={{_id, ingredient}}>
+        <.link
+          phx-click={JS.push("delete_ingredient", value: %{id: ingredient.id}) |> hide("##{ingredient.id}")}
+          data-confirm="Are you sure?"
+        >
+          <.icon name="hero-trash" />
+        </.link>
+      </:action>
+    </.table>
+  </div>
+</div>
+
+<.back navigate={~p"/recipes"}>Back to recipes</.back>
+
+<.modal :if={@live_action == :edit} id="recipe-modal" show on_cancel={JS.patch(~p"/recipes/#{@recipe}")}>
+  <.live_component
+    module={SmartRecipeCalculatorWeb.RecipeLive.FormComponent}
+    id={@recipe.id}
+    title={@page_title}
+    action={@live_action}
+    recipe={@recipe}
+    return_to={~p"/recipes/#{@recipe}"}
+  />
+</.modal>

@@ -1,0 +1,41 @@
+<.header>
+  Listing Ingredient details
+  <:actions>
+    <.link patch={~p"/ingredient_details/new"}>
+      <.button>New Ingredient detail</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.table
+  id="ingredient_details"
+  rows={@streams.ingredient_details}
+  row_click={fn {_id, ingredient_detail} -> JS.navigate(~p"/ingredient_details/#{ingredient_detail}") end}
+>
+  <:col :let={{_id, ingredient_detail}} label="Ingredient ID">{ingredient_detail.ingredient_id}</:col>
+  <:action :let={{_id, ingredient_detail}}>
+    <div class="sr-only">
+      <.link navigate={~p"/ingredient_details/#{ingredient_detail}"}>Show</.link>
+    </div>
+    <.link patch={~p"/ingredient_details/#{ingredient_detail}/edit"}>Edit</.link>
+  </:action>
+  <:action :let={{id, ingredient_detail}}>
+    <.link
+      phx-click={JS.push("delete", value: %{id: ingredient_detail.id}) |> hide("##{id}")}
+      data-confirm="Are you sure?"
+    >
+      Delete
+    </.link>
+  </:action>
+</.table>
+
+<.modal :if={@live_action in [:new, :edit]} id="ingredient_detail-modal" show on_cancel={JS.patch(~p"/ingredient_details")}>
+  <.live_component
+    module={SmartRecipeCalculatorWeb.IngredientDetailLive.FormComponent}
+    id={@ingredient_detail.id || :new}
+    title={@page_title}
+    action={@live_action}
+    ingredient_detail={@ingredient_detail}
+    patch={~p"/ingredient_details"}
+  />
+</.modal>

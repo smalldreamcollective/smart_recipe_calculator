@@ -1,0 +1,19 @@
+{
+  "name": "smart_recipe_calculator",
+  "version": "1.0.0",
+  "description": "Smart Recipe Calculator Phoenix Application",
+  "scripts": {
+    "deploy": "mix assets.deploy && phx.digest",
+    "watch": "mix phx.server"
+  },
+  "dependencies": {
+    "phoenix": "file:../deps/phoenix",
+    "phoenix_html": "file:../deps/phoenix_html",
+    "phoenix_live_view": "file:../deps/phoenix_live_view",
+    "topbar": "^1.0.1"
+  },
+  "devDependencies": {
+    "esbuild": "^0.19.0",
+    "tailwindcss": "^3.3.0"
+  }
+} 
