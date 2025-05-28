@@ -1,4 +1,4 @@
-# SmartRecipeCalculator
+# SmartRecipeCalculator (vibe coding experiment)
 
 To start your Phoenix server:
 
