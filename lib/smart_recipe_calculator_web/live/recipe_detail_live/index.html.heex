@@ -1,0 +1,41 @@
+<.header>
+  Listing Recipe details
+  <:actions>
+    <.link patch={~p"/recipe_details/new"}>
+      <.button>New Recipe detail</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.table
+  id="recipe_details"
+  rows={@streams.recipe_details}
+  row_click={fn {_id, recipe_detail} -> JS.navigate(~p"/recipe_details/#{recipe_detail}") end}
+>
+  <:col :let={{_id, recipe_detail}} label="Recipe ID">{recipe_detail.recipe_id}</:col>
+  <:action :let={{_id, recipe_detail}}>
+    <div class="sr-only">
+      <.link navigate={~p"/recipe_details/#{recipe_detail}"}>Show</.link>
+    </div>
+    <.link patch={~p"/recipe_details/#{recipe_detail}/edit"}>Edit</.link>
+  </:action>
+  <:action :let={{id, recipe_detail}}>
+    <.link
+      phx-click={JS.push("delete", value: %{id: recipe_detail.id}) |> hide("##{id}")}
+      data-confirm="Are you sure?"
+    >
+      Delete
+    </.link>
+  </:action>
+</.table>
+
+<.modal :if={@live_action in [:new, :edit]} id="recipe_detail-modal" show on_cancel={JS.patch(~p"/recipe_details")}>
+  <.live_component
+    module={SmartRecipeCalculatorWeb.RecipeDetailLive.FormComponent}
+    id={@recipe_detail.id || :new}
+    title={@page_title}
+    action={@live_action}
+    recipe_detail={@recipe_detail}
+    patch={~p"/recipe_details"}
+  />
+</.modal>
